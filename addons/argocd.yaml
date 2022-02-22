@@ -1,0 +1,217 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: argocd
+spec:
+  generators:
+    - git:
+        repoURL: https://github.com/jenana-devops/argocd-env.git
+        revision: HEAD
+        files:
+          - path: "env/ops/alpha/*.yaml"
+
+  template:
+    metadata:
+      name: "argocd"
+      #annotations:
+        #notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-{{cluster_env}}-addon
+      labels:
+        app.kubernetes.io/instance: "addons-{{cluster}}"
+        krmt.io/cluster: "{{cluster}}"
+        krmt.io/group: "addons"
+    spec:
+      project: addons
+      destination:
+        name: "{{cluster}}"
+        namespace: argocd
+      source:
+        repoURL: https://argoproj.github.io/argo-helm
+        targetRevision: "3.33.5"
+        chart: argo-cd
+        helm:
+          values: |-
+            fullnameOverride: argocd
+
+            controller:
+              resources:
+                requests:
+                  cpu: 250m
+                  memory: 512Mi
+                limits:
+                  cpu: 500m
+                  memory: 1Gi
+
+              metrics:
+                enabled: true
+                serviceMonitor:
+                  enabled: true
+                  interval: 30s
+                  selector:
+                    release: prometheus-{{cluster}}
+
+            server:
+              replicas: 2
+
+              autoscaling:
+                enabled: true
+                minReplicas: 2
+                maxReplicas: 4
+                targetCPUUtilizationPercentage: 60
+                targetMemoryUtilizationPercentage: 60
+
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 256Mi
+                limits:
+                  cpu: 200m
+                  memory: 512Mi
+
+              service:
+                type: LoadBalancer
+                annotations:
+                  external-dns.alpha.kubernetes.io/hostname: "{{argocd.hostname}}"
+                  service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
+                  service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "3600"
+                  service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "{{argocd.acm_arn}}"
+                  service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
+
+              extraArgs:
+                - --insecure
+
+              config:
+                url: https://{{argocd.hostname}}
+
+                dex.config: |
+                  connectors:
+                  - type: github
+                    id: github
+                    name: github
+                    config:
+                      clientID: $dex.github.clientId
+                      clientSecret: $dex.github.clientSecret
+                      teamNameField: slug
+                      orgs:
+                        - name: {{argocd.github.org}}
+                  staticClients:
+                  - id: argo-workflows-sso
+                    name: Argo Workflow
+                    redirectURIs:
+                      - https://argo-workflows.{{hostname.public}}/oauth2/callback
+                    secretEnv: ARGO_WORKFLOWS_SSO_CLIENT_SECRET
+
+              rbacConfig:
+                policy.default: "role:readonly"
+                policy.csv: |
+                  g, {{argocd.github.org}}:{{argocd.github.team}}, role:admin
+
+              additionalProjects:
+                - name: addons
+                  namespace: argocd
+                  description: addons project
+                  sourceRepos:
+                    - "*"
+                  destinations:
+                    - namespace: "*"
+                      server: "*"
+                  clusterResourceWhitelist:
+                    - group: "*"
+                      kind: "*"
+
+                - name: apps
+                  namespace: argocd
+                  description: apps project
+                  sourceRepos:
+                    - "*"
+                  destinations:
+                    - namespace: "*"
+                      server: "*"
+                  clusterResourceWhitelist:
+                    - group: "*"
+                      kind: "*"
+
+              metrics:
+                enabled: true
+                serviceMonitor:
+                  enabled: true
+                  interval: 30s
+                  selector:
+                    release: prometheus-{{cluster}}
+
+            repoServer:
+              replicas: 2
+
+              autoscaling:
+                enabled: true
+                minReplicas: 2
+                maxReplicas: 4
+                targetCPUUtilizationPercentage: 60
+                targetMemoryUtilizationPercentage: 60
+
+              resources:
+                requests:
+                  cpu: 250m
+                  memory: 512Mi
+                limits:
+                  cpu: 500m
+                  memory: 1Gi
+
+              metrics:
+                enabled: true
+                serviceMonitor:
+                  enabled: true
+                  interval: 30s
+                  selector:
+                    release: prometheus-{{cluster}}
+
+            dex:
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 128Mi
+                limits:
+                  cpu: 100m
+                  memory: 256Mi
+
+              env:
+                - name: ARGO_WORKFLOWS_SSO_CLIENT_SECRET
+                  valueFrom:
+                    secretKeyRef:
+                      name: argocd-secret
+                      key: argo-workflows-client-secret
+
+              metrics:
+                enabled: true
+                serviceMonitor:
+                  enabled: true
+                  interval: 30s
+                  selector:
+                    release: prometheus-{{cluster}}
+
+            redis:
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 128Mi
+                limits:
+                  cpu: 100m
+                  memory: 256Mi
+
+            configs:
+              secret:
+                createSecret: false
+
+              repositories:
+                - name: env-demo
+                  type: git
+                  url: https://github.com/opspresso/argocd-env-demo
+                - name: opspresso
+                  type: helm
+                  url: https://opspresso.github.io/helm-charts
+
+      syncPolicy:
+        # automated:
+        #   prune: true
+        #   selfHeal: true
+        syncOptions:
+          - CreateNamespace=true

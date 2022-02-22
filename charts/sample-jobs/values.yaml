@@ -1,0 +1,5 @@
+job1:
+  fullnameOverride: sample-job1
+
+job2:
+  fullnameOverride: sample-job2

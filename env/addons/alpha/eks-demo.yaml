@@ -1,0 +1,45 @@
+cluster: eks-demo
+cluster_env: alpha
+cluster_end: https://BDE8CEF77A7E5D6C37647930733EEA5E.gr7.ap-northeast-2.eks.amazonaws.com
+
+cluster_oidc:
+
+country: kr
+
+aws_account_id: "082867736673"
+aws_region: ap-northeast-2
+
+hostname:
+  internal: in.demo.nalbam.com
+  public: demo.nalbam.com
+
+argo-workflows:
+  github:
+    org: opspresso
+    team: sre
+
+istio:
+  version: "1.12.3"
+  sampling: 10
+  target_group:
+    internal_http: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-in-http-0/3eb4eff4df206e4b
+    internal_http2: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-in-http2-0/4b7cbe007f009e4e
+    public_http: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-http-0/9fd4eb26ae3941da
+    public_http2: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-http2-0/cf43fe9153de2530
+
+karpenter:
+  instanceProfile: eks-demo-worker
+  launchTemplate: eks-demo-workers-v1-2021121000100059230000000b
+
+cluster-autoscaler:
+  scan-interval: 6m
+  scale-down-delay-after-delete: 5m
+  scale-down-utilization-threshold: 0.6
+
+cluster-overprovisioner:
+  replicas: 0
+  cpu: "1"
+  memory: 1Gi
+
+promtail:
+  lokiAddress: http://loki.in.demo.nalbam.com/loki/api/v1/push

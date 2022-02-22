@@ -1,0 +1,37 @@
+app:
+  fullnameOverride: sample-grpc
+
+  image:
+    # repository: 082867736673.dkr.ecr.ap-northeast-2.amazonaws.com/nalbam/sample-grpc
+    repository: ghcr.io/nalbam/sample-grpc
+    # repository: nalbam/sample-grpc
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
+
+  service:
+    name: grpc
+    targetPort: 50051
+
+  readinessProbe:
+    failureThreshold: 3
+    exec:
+      command:
+        - /bin/grpc_health_probe
+        - '-addr=:50051'
+    initialDelaySeconds: 3
+    periodSeconds: 3
+
+  livenessProbe:
+    failureThreshold: 3
+    exec:
+      command:
+        - /bin/grpc_health_probe
+        - '-addr=:50051'
+    initialDelaySeconds: 3
+    periodSeconds: 3

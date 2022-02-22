@@ -1,0 +1,84 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: kiali
+spec:
+  generators:
+    - list:
+        elements:
+          - cluster: eks-demo
+            values:
+              host: "demo.nalbam.com"
+
+  template:
+    metadata:
+      name: "kiali-{{cluster}}"
+      annotations:
+        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-{{cluster_env}}-addon
+      labels:
+        app.kubernetes.io/instance: "addons-{{cluster}}"
+        krmt.io/cluster: "{{cluster}}"
+        krmt.io/group: "addons"
+    spec:
+      project: addons
+      destination:
+        name: "{{cluster}}"
+        namespace: addon-tracing
+      source:
+        repoURL: https://kiali.org/helm-charts
+        targetRevision: "1.39.0"
+        chart: kiali-server
+        helm:
+          values: |-
+            fullnameOverride: kiali
+
+            server:
+              web_schema: https
+              web_fqdn: "kiali.{{hostname}}"
+
+            istio_namespace: "istio-system"
+
+            auth:
+              # strategy: anonymous
+              strategy: openid
+              openid:
+                client_id: "661360902815-i61mqbplqaerrsurepuu8r5cbqm6uuhh.apps.googleusercontent.com"
+                disable_rbac: true
+                issuer_uri: "https://accounts.google.com"
+                scopes: ["openid", "email"]
+                username_claim: "email"
+                allowed_domains: # https://github.com/kiali/kiali/pull/4296
+                  - nalbam.com
+                  - daangn.com
+
+            deployment:
+              ingress_enabled: false
+
+              # tolerations:
+              #   - key: group
+              #     operator: Equal
+              #     value: graviton
+              #     effect: NoSchedule
+              # nodeSelector:
+              #   group: graviton
+
+            login_token:
+              signing_key: eks-demo-kiali-token
+
+            external_services:
+              grafana:
+                in_cluster_url: "http://grafana.addon-grafana.svc.cluster.local"
+                url: "https://grafana.{{hostname}}"
+
+              prometheus:
+                url: "http://prometheus-prometheus.addon-prometheus.svc.cluster.local:9090"
+
+              tracing:
+                in_cluster_url: "http://jaeger-query.addon-tracing.svc.cluster.local"
+
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true

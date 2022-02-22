@@ -1,0 +1,72 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: istio-ingress
+spec:
+  generators:
+    - git:
+        repoURL: https://github.com/jenana-devops/argocd-env.git
+        revision: HEAD
+        files:
+          - path: "env/addons/alpha/*.yaml"
+
+  template:
+    metadata:
+      name: "istio-ingress-{{cluster}}"
+      #annotations:
+        #notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-{{cluster_env}}-addon
+      labels:
+        app.kubernetes.io/instance: "addons-{{cluster}}"
+        krmt.io/cluster: "{{cluster}}"
+        krmt.io/group: "addons"
+    spec:
+      project: addons
+      destination:
+        name: "{{cluster}}"
+        namespace: istio-system
+      source:
+        repoURL: https://github.com/istio/istio
+        targetRevision: "{{istio.version}}"
+        path: manifests/charts/gateways/istio-ingress
+        helm:
+          values: |-
+            global:
+              hub: gcr.io/istio-release
+              tag: "{{istio.version}}"
+
+            gateways:
+              istio-ingressgateway:
+                type: ClusterIP
+
+                # ports:
+                # - name: status-port
+                #   port: 15021
+                #   targetPort: 15021
+                #   protocol: TCP
+                # - name: http2
+                #   port: 80
+                #   targetPort: 8080
+                #   protocol: TCP
+                # - name: https
+                #   port: 443
+                #   targetPort: 8443
+                #   protocol: TCP
+
+                autoscaleEnabled: true
+                autoscaleMin: 2
+                autoscaleMax: 5
+
+                resources:
+                  requests:
+                    cpu: 100m
+                    memory: 128Mi
+                  limits:
+                    cpu: 1000m
+                    memory: 1024Mi
+
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
