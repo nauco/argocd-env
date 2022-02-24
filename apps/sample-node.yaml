@@ -5,7 +5,7 @@ metadata:
 spec:
   generators:
     - git:
-        repoURL: https://github.com/opspresso/argocd-env-demo.git
+        repoURL: https://github.com/jenana-devops/argocd-env
         revision: HEAD
         files:
           - path: "env/apps/alpha/*.yaml"
@@ -13,8 +13,8 @@ spec:
   template:
     metadata:
       name: "sample-node-{{cluster}}"
-      annotations:
-        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-{{cluster_env}}
+      #annotations:
+        #notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-{{cluster_env}}
       labels:
         app.kubernetes.io/instance: "apps-{{cluster}}"
         krmt.io/cluster: "{{cluster}}"
@@ -25,7 +25,7 @@ spec:
         name: "{{cluster}}"
         namespace: sample
       source:
-        repoURL: https://github.com/opspresso/argocd-env-demo
+        repoURL: https://github.com/jenana-devops/argocd-env
         targetRevision: HEAD
         path: charts/sample-node
         helm:
@@ -40,19 +40,19 @@ spec:
                   ENV: {{cluster_env}}
               ingress:
                 hosts:
-                - host: sample-node.{{hostname.this}}
+                #- host: sample-node.{{hostname.this}}
                 - host: sample-node.{{hostname.public}}
                 preview:
                   hosts:
-                  - host: sample-node-preview.{{hostname.this}}
+                  #- host: sample-node-preview.{{hostname.this}}
                   - host: sample-node-preview.{{hostname.public}}
                 stable:
                   hosts:
-                  - host: sample-node-stable.{{hostname.this}}
+                  #- host: sample-node-stable.{{hostname.this}}
                   - host: sample-node-stable.{{hostname.public}}
-              serviceMonitor:
-                selector:
-                  release: prometheus-{{cluster}}
+              #serviceMonitor:
+                #selector:
+                  #release: prometheus-{{cluster}}
 
       syncPolicy:
         automated:
