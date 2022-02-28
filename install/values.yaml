@@ -4,13 +4,13 @@ server:
   replicas: 2
 
   service:
-    type: LoadBalancer
-    annotations:
-      external-dns.alpha.kubernetes.io/hostname: "ARGOCD_HOSTNAME"
-      service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
-      service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "3600"
-      service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "AWS_ACM_CERT"
-      service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
+    type: NodePort
+    #annotations:
+      #external-dns.alpha.kubernetes.io/hostname: "ARGOCD_HOSTNAME"
+      #service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
+      #service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "3600"
+      #service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "AWS_ACM_CERT"
+      #service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
 
   extraArgs:
     - --insecure
