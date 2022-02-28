@@ -11,10 +11,9 @@ spec:
   source:
     repoURL: https://github.com/jenana-devops/argocd-env.git
     targetRevision: HEAD
-    path: nginx
+    path: apps
   destination:
     server: https://kubernetes.default.svc
-    namespace: nginx
   syncPolicy:
     automated: 
       prune: true 
