@@ -1,9 +1,0 @@
-cluster: eks-demo
-cluster_env: alpha
-
-aws_account_id: "770651438857"
-aws_region: ap-northeast-2
-
-hostname:
-  public: jenana.net
-  #this: demo-o.nalbam.com
