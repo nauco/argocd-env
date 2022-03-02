@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nginx-deployment
-  namespace: argocd
+  namespace: nginx
   labels:
     app: nginx
 spec:
@@ -27,7 +27,7 @@ kind: Service
 metadata:
   name: nginx-svc
   # It should be the same as "argocd ingress namespace"
-  namespace: argocd
+  namespace: nginx
 spec:
   selector:
     app: nginx
