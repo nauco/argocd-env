@@ -32,6 +32,12 @@ spec:
       - backend:
           serviceName: nginx-svc  
           servicePort: 80
+  - host: apache.jenana.net
+    http:
+      paths:
+      - backend:
+          serviceName: apache-svc  
+          servicePort: 80          
                 
 
 
