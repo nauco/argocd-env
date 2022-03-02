@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -19,25 +18,4 @@ spec:
     automated: 
       prune: true 
       selfHeal: true    
-=======
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: nginx
-  namespace: argocd
-  # Add a this finalizer ONLY if you want these to cascade delete.
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
-spec:
-  project: default
-  source:
-    repoURL: https://github.com/jenana-devops/argocd-env.git
-    targetRevision: HEAD
-    path: apps
-  destination:
-    server: https://kubernetes.default.svc
-  syncPolicy:
-    automated: 
-      prune: true 
-      selfHeal: true 
->>>>>>> 345421932dbf050f1017882af3583fa7152a57f4
+
