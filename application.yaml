@@ -13,8 +13,9 @@ spec:
     targetRevision: HEAD
     path: apps
   destination:
-    server: https://kubernetes.default.svc
+    server: https://C58A9B695AD37BE5FE8F419FC3F26691.gr7.ap-northeast-2.eks.amazonaws.com
   syncPolicy:
     automated: 
       prune: true 
-      selfHeal: true 
+      selfHeal: true    
+
