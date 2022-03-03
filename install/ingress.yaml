@@ -5,7 +5,7 @@ metadata:
   namespace: argocd
   annotations:
     kubernetes.io/ingress.class: alb
-    #external-dns.alpha.kubernetes.io/hostname: "DOMAIN_NAME"
+    alb.ingress.kubernetes.io/group.name: my-alb
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/certificate-arn: "AWS_ACM_CERT"
     alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-2016-08
@@ -25,19 +25,7 @@ spec:
       paths:
       - backend:
           serviceName: argocd-server
-          servicePort: 443
-  - host: nginx.jenana.net
-    http:
-      paths:
-      - backend:
-          serviceName: nginx-svc  
-          servicePort: 80
-  - host: apache.jenana.net
-    http:
-      paths:
-      - backend:
-          serviceName: apache-svc  
-          servicePort: 80          
+          servicePort: 443       
                 
 
 
