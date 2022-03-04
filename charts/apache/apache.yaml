@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: apache-deployment
+  # It should be the same as "application namespcae"
   namespace: argocd
   labels:
     app: apache
