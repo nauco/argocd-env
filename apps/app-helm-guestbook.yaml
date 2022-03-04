@@ -17,7 +17,8 @@ spec:
   
   destination:
     server: https://kubernetes.default.svc
-    namespace: test
+    # apps namespace 지정이 안되어있을 경우 붙는다. kubectl get all -n my-apps
+    namespace: my-apps
   
   syncPolicy:
     automated: 
