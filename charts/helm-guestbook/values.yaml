@@ -24,8 +24,8 @@ ingress:
   path: /
   hosts:
     - guestbook.jenana.net
-      paths: 
-        - "/*"  
+      paths: /
+  
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
