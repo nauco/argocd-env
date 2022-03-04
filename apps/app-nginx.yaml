@@ -13,7 +13,7 @@ spec:
   source:
     repoURL: https://github.com/jenana-devops/argocd-env.git
     targetRevision: HEAD
-    path: charts/nginx
+    path: charts/helm-nginx
   
   destination:
     server: https://kubernetes.default.svc
