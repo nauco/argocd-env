@@ -49,8 +49,8 @@ metadata:
     alb.ingress.kubernetes.io/group.name: my-alb
     alb.ingress.kubernetes.io/group.order: '4'
     alb.ingress.kubernetes.io/scheme: internet-facing
-  labels:
-    app: argocd-ingress
+  #labels:
+    #app: argocd-ingress
 spec:
   rules:
   - host: "nginx.jenana.net"
