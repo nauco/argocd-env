@@ -8,3 +8,23 @@ spec:
     targetPort: 80	
   selector:	
     app: guestbook-ui
+
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: kguestbook-ingress
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/group.name: my-alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+  labels:
+    app: argocd-ingress
+spec:
+  rules:
+  - host: "kguestbook-ingress.jenana.net"
+    http:
+      paths:
+      - backend:
+          serviceName: kustomize-guestbook-ui
+          servicePort: 80

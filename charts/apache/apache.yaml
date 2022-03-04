@@ -35,4 +35,26 @@ spec:
       port: 80
       targetPort: 80
       nodePort: 30010
-  type: NodePort        
+  type: NodePort   
+
+
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: apache-ingress
+  namespace: argocd
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/group.name: my-alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+  labels:
+    app: argocd-ingress
+spec:
+  rules:
+  - host: "apache.jenana.net"
+    http:
+      paths:
+      - backend:
+          serviceName: apache-svc
+          servicePort: 80       
