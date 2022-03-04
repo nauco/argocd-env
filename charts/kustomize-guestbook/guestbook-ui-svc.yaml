@@ -8,6 +8,7 @@ spec:
     targetPort: 80	
   selector:	
     app: guestbook-ui
+  type: NodePort   
 
 ---
 apiVersion: extensions/v1beta1
@@ -17,6 +18,7 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: alb
     alb.ingress.kubernetes.io/group.name: my-alb
+    alb.ingress.kubernetes.io/group.order: '3'
     alb.ingress.kubernetes.io/scheme: internet-facing
   labels:
     app: argocd-ingress

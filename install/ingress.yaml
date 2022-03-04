@@ -6,6 +6,7 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: alb
     alb.ingress.kubernetes.io/group.name: my-alb
+    alb.ingress.kubernetes.io/group.order: '1'
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/certificate-arn: "AWS_ACM_CERT"
     alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-2016-08
