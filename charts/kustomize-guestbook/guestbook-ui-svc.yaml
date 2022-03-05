@@ -25,7 +25,7 @@ metadata:
     app: argocd-ingress
 spec:
   rules:
-  - host: "kguestbook-ingress.jenana.net"
+  - host: "kguestbook.jenana.net"
     http:
       paths:
       - backend:
