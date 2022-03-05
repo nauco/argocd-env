@@ -577,7 +577,7 @@ ldapDaemon:
 service:
   ## @param service.type Service type
   ##
-  type: LoadBalancer
+  type: NodePort
   ## @param service.port Service HTTP port
   ##
   port: 80
