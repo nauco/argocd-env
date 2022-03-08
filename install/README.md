@@ -132,7 +132,7 @@ argocd cluster list
 > application 을 배포합니다.
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/jenana-devops/argocd-env-private/master/application.yaml
+kubectl apply -f https://raw.githubusercontent.com/jenana-devops/argocd-env/master/application.yaml
 ```
 
 ## Delete
@@ -140,7 +140,7 @@ kubectl apply -f https://raw.githubusercontent.com/jenana-devops/argocd-env-priv
 > ingress 및 application 을 삭제합니다.
 
 ```bash
-kubectl delete -f https://raw.githubusercontent.com/jenana-devops/argocd-env-private/master/application.yaml
+kubectl delete -f https://raw.githubusercontent.com/jenana-devops/argocd-env/master/application.yaml
 kubectl delete -f argocd-ingress.yaml
 ```
 
