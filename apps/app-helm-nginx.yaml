@@ -6,14 +6,12 @@ metadata:
   # Add a this finalizer ONLY if you want these to cascade delete.
   finalizers:
     - resources-finalizer.argocd.argoproj.io
-
 spec:
   project: apps
   
   source:
-    repoURL: https://github.com/jenana-devops/argocd-env.git
-    targetRevision: HEAD
-    path: charts/helm-nginx
+    repoURL: https://github.com/nginxinc/kubernetes-ingress/deployments/helm-chart
+    path: /
   
   destination:
     server: https://kubernetes.default.svc
